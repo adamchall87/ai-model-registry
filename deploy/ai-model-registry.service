@@ -1,0 +1,21 @@
+[Unit]
+Description=AI Model Registry — Live AI model polling service
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/ai-model-registry
+Environment=POLL_INTERVAL=3600
+# OLLAMA_API_KEY is optional — set only if you want full Ollama model listing
+# Environment=OLLAMA_API_KEY=your_key_here
+ExecStart=/usr/bin/python3 -m uvicorn src.server:app --host 0.0.0.0 --port 8000
+Restart=on-failure
+RestartSec=10
+
+# Security: All endpoints are GET-only (read-only). No POST/write surface.
+# CORS is disabled — pure JSON API for agents, not browsers.
+# Safe to expose publicly — no auth needed since there's nothing to abuse.
+
+[Install]
+WantedBy=multi-user.target
