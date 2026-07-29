@@ -7,11 +7,13 @@ set -e
 # Example: bash deploy.sh registry.adamdoesai.com
 
 DOMAIN="${1:-}"
+PORT="${2:-9847}"
 PROJECT_DIR="/opt/ai-model-registry"
 PYTHON_BIN="python3"
 
 echo "=== AI Model Registry Deployment ==="
-echo "Domain: ${DOMAIN:-none (HTTP only on port 8000)}"
+echo "Domain: ${DOMAIN:-none (HTTP only on port $PORT)}"
+echo "Port: $PORT"
 echo ""
 
 # ── 1. Install system packages ──────────────────────────────────────────
@@ -53,7 +55,7 @@ Wants=network-online.target
 Type=simple
 WorkingDirectory=$PROJECT_DIR
 Environment=POLL_INTERVAL=3600
-ExecStart=$PROJECT_DIR/.venv/bin/python -m uvicorn src.server:app --host 127.0.0.1 --port 8000
+ExecStart=$PROJECT_DIR/.venv/bin/python -m uvicorn src.server:app --host 127.0.0.1 --port $PORT
 Restart=on-failure
 RestartSec=10
 
@@ -76,7 +78,7 @@ server {
     server_name $DOMAIN;
 
     location / {
-        proxy_pass http://127.0.0.1:8000;
+        proxy_pass http://127.0.0.1:$PORT;
         proxy_set_header Host \$host;
         proxy_set_header X-Real-IP \$remote_addr;
         proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
@@ -109,11 +111,11 @@ if [ -n "$DOMAIN" ]; then
     URL="https://$DOMAIN"
 else
     PROTO="http"
-    URL="http://localhost:8000"
+    URL="http://localhost:$PORT"
 fi
 
 echo "Testing API..."
-RESPONSE=$(curl -s "$URL/" 2>/dev/null || curl -s http://localhost:8000/ 2>/dev/null)
+RESPONSE=$(curl -s "$URL/" 2>/dev/null || curl -s http://localhost:$PORT/ 2>/dev/null)
 if echo "$RESPONSE" | grep -q "AI Model Registry"; then
     echo "PASS — API is live at $URL"
     echo ""
