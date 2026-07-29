@@ -55,7 +55,7 @@ Wants=network-online.target
 Type=simple
 WorkingDirectory=$PROJECT_DIR
 Environment=POLL_INTERVAL=3600
-ExecStart=$PROJECT_DIR/.venv/bin/python -m uvicorn src.server:app --host 127.0.0.1 --port $PORT
+ExecStart=$PROJECT_DIR/.venv/bin/python -m uvicorn src.server:app --host 0.0.0.0 --port $PORT
 Restart=on-failure
 RestartSec=10
 
