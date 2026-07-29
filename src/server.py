@@ -196,7 +196,7 @@ async def search_models(
 
 @app.get("/models/best")
 async def best_models(
-    capability: str = Query(..., description="Capability: coding, vision, tools, reasoning, agent, general, cheapest, largest_context, image_gen, video_gen, audio_tts"),
+    capability: str = Query(..., description="Capability: coding, vision, tools, reasoning, agent, general, cheapest, largest_context, llm, image_gen, video_gen, audio_tts"),
     limit: int = Query(10, le=50),
 ):
     """Get best models for a given capability, ranked by heuristics."""
@@ -208,8 +208,9 @@ async def best_models(
     elif cap == "largest_context":
         ranked = sorted([m for m in models if m.get("context_length")], key=lambda m: m["context_length"], reverse=True)
     elif cap == "coding":
-        coding = [m for m in models if any(k in m.get("id", "").lower() for k in ["code", "coder", "coding", "devstral"])]
-        ranked = sorted(coding, key=lambda m: (m.get("downloads") or m.get("context_length") or 0), reverse=True)
+        # LLMs with tools support, ranked by context length (newer models have larger context)
+        coding = [m for m in models if m.get("modality") == "llm" and m.get("supports_tools") is True]
+        ranked = sorted(coding, key=lambda m: (m.get("context_length") or 0), reverse=True)
     elif cap == "vision":
         vision = [m for m in models if m.get("supports_vision") is True or "vision" in str(m.get("modality", "")).lower() or "image" in str(m.get("input_modalities", [])).lower() or "vlm" in m.get("id", "").lower()]
         ranked = sorted(vision, key=lambda m: (m.get("downloads") or 0), reverse=True)
@@ -227,7 +228,11 @@ async def best_models(
     elif cap == "audio_tts":
         ranked = sorted([m for m in models if m.get("modality") == "audio"], key=lambda m: (m.get("downloads") or m.get("likes") or 0), reverse=True)
     elif cap == "general":
-        ranked = sorted(models, key=lambda m: (m.get("downloads") or 0), reverse=True)
+        # LLMs only, ranked by context length (best proxy for recency/capability)
+        ranked = sorted([m for m in models if m.get("modality") == "llm"], key=lambda m: (m.get("context_length") or 0), reverse=True)
+    elif cap == "llm":
+        # All LLMs ranked by context length
+        ranked = sorted([m for m in models if m.get("modality") == "llm"], key=lambda m: (m.get("context_length") or 0), reverse=True)
     else:
         ranked = models
 
