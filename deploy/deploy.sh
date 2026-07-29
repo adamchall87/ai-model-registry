@@ -8,10 +8,13 @@ set -e
 
 DOMAIN="${1:-}"
 PORT="${2:-9847}"
-PROJECT_DIR="/opt/ai-model-registry"
+# PROJECT_DIR can be overridden: PROJECT_DIR=/path/to/install bash deploy.sh
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_DIR="${PROJECT_DIR:-$(dirname "$SCRIPT_DIR")}"
 PYTHON_BIN="python3"
 
 echo "=== AI Model Registry Deployment ==="
+echo "Install dir: $PROJECT_DIR"
 echo "Domain: ${DOMAIN:-none (HTTP only on port $PORT)}"
 echo "Port: $PORT"
 echo ""
