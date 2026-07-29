@@ -1,7 +1,7 @@
 ---
 name: ai-model-registry
 description: 'Live AI model registry MCP server — polls OpenRouter, HuggingFace, and Ollama Cloud hourly + static commercial models file. Covers ALL GenAI modalities: LLMs, image gen, video gen, audio/TTS, vision, 3D. Query before ANY model recommendation to avoid referencing outdated models from training data.'
-version: 2.3.0
+version: 2.3.1
 author:
   name: Adam Hall + Hermes
   identity: did:web:github.com/adamchall87
@@ -62,8 +62,8 @@ scan_status:
   result: pass
   date: 2026-07-28
 signing_key: ed25519:LS0tLS1CRUdJTiBQVUJMSUMgS0VZLS0tLS0KTUNvd0JRWURLMlZ3QXlFQVJ3Tys2RENBTitkdHV4WUlPS1MxSjNYZ1R5ZkEyR28zMVVOK0ZqbVd5YVU9Ci0tLS0tRU5EIFBVQkxJQyBLRVktLS0tLQo=
-content_hash: e446d5a29ff1b39ace7e4e32dbc769c5957e707dce3a09f8dfeacd6b70a80a9b
-signature: ed25519:ab1f74669d4ebdd0f9dd732bf94b04b78bf07b0b55b2a0b4cd98f9354ee137cc4fae4f1c5a1b27e736050333fcbccb432caf47da1d32880c486e3186e2342301
+content_hash: afbe4c535db701e79825836ca7d79246b998318d6cbbe07e5587da259abefda9
+signature: ed25519:74aa6ab23048521cebe7820cc420177a607c5375f7ca42eebe66f35219c29590404b9397f6bb4083477a2ec9d220f0e32e8dc2f2da3970b7a0b57da27e27c70f
 ---
 # AI Model Registry
 
@@ -130,7 +130,7 @@ This is a **public service** — any agent anywhere can query the REST API. No a
 |------|-------------|
 | `mcp_model_registry_list_models` | List models with filters (source, modality, capability, min_context, max_price, limit) |
 | `mcp_model_registry_search_models` | Search by name/id/description, optional modality filter |
-| `mcp_model_registry_best_models` | Best models for a capability (coding, vision, tools, reasoning, agent, image_gen, video_gen, audio_tts, cheapest, largest_context) |
+| `mcp_model_registry_best_models` | Best models for a capability (general, llm, coding, vision, tools, reasoning, agent, image_gen, video_gen, audio_tts, cheapest, largest_context) |
 | `mcp_model_registry_compare_models` | Compare specific models side-by-side with winners per dimension + summary |
 | `mcp_model_registry_registry_stats` | Registry statistics (total models, by source, by modality, capability counts) |
 
@@ -250,7 +250,9 @@ GET https://registry.yourdomain.com/stats
 
 ## Capabilities Supported
 
-- `coding` — code/coder/devstral models
+- `general` — LLMs ranked by context length (best proxy for recency/capability)
+- `llm` — all LLMs ranked by context length
+- `coding` — tool-capable LLMs ranked by context length
 - `vision` — models with image input (VLMs) or supports_vision flag
 - `tools` — models that support tool/function calling
 - `reasoning` — models with thinking/reasoning capability
@@ -274,6 +276,8 @@ GET https://registry.yourdomain.com/stats
 - **Model pricing is per-token, not per-request**: OpenRouter returns prices per 1M tokens. Some providers return scientific notation (e.g. `5e-06` = $0.000005/1M).
 - **Commercial models are manually maintained**: The `commercial_models.json` file is updated manually by the skill author. When a new commercial model launches (e.g. Seedance 3.0, Veo 4), the file must be updated manually. A scheduled job to check for new model announcements is planned but not yet implemented.
 - **Do NOT add providers the user didn't ask for**: In the original session, I added Replicate and Fal.ai pollers without being asked. AJ called this out — he has a 4090 with ComfyUI for local generation and OpenArt.ai for cloud. Stick to the 3 live sources + commercial static file unless AJ explicitly requests a new source.
+- **Search by model name, not company name**: `search_models(q="anthropic")` returns 200+ results sorted by relevance score — the newest model may not surface. Instead search `q="claude opus 5"` or `q="gpt-5.6"` to find specific models directly. When asked "what's the latest from X", search the model family name, not the vendor.
+- **The registry IS the tool — no web_search needed**: The entire purpose of this registry is to give agents a single tool call that returns current model data. An agent using the MCP tools should NEVER need to web_search for model info — the registry polls OpenRouter, HuggingFace, and Ollama Cloud hourly. If a model exists on those platforms, it's in the registry. If it's not in the registry, it's not available through those providers. Commercial models (Veo, Kling, etc.) are in the static file — if a new commercial model launches, the file needs a manual update, but for LLMs the registry is authoritative and real-time.
 - **Commercial models go stale fast — verify before recommending**: Sora 2 Pro was discontinued April 26, 2026 (web app) / September 24, 2026 (API) but was still in the registry as an active model. Seedance 2.0 was superseded by 2.5 (June 23, 2026 announcement) but the file still had 2.0. The `commercial_models.json` file is manually maintained and can lag reality by weeks. Before recommending a commercial model, do a web_search to confirm it's still active and current version. If you find a model has been discontinued or updated, patch the JSON file immediately.
 - **Security: read-only public deployment**: The FastAPI server has NO CORS middleware (pure JSON API for agents, not browsers) and NO POST endpoints. All endpoints are GET-only — the server refreshes its cache on a scheduled timer, no external write surface exists. Safe to deploy on 0.0.0.0 for public agent access.
 - **Governance**: Skill maintained by Adam Hall (adamdoesai.com). Changes reviewed and re-audited before deployment. Commercial models file updates follow a defined release cadence.

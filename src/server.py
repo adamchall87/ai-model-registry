@@ -196,7 +196,7 @@ async def search_models(
 
 @app.get("/models/best")
 async def best_models(
-    capability: str = Query(..., description="Capability: coding, vision, tools, reasoning, agent, general, cheapest, largest_context, llm, image_gen, video_gen, audio_tts"),
+    capability: str = Query(..., description="Capability: general, llm, coding, vision, tools, reasoning, agent, cheapest, largest_context, image_gen, video_gen, audio_tts"),
     limit: int = Query(10, le=50),
 ):
     """Get best models for a given capability, ranked by heuristics."""

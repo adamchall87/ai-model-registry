@@ -101,7 +101,7 @@ async def list_tools() -> ListToolsResult:
                 "properties": {
                     "capability": {
                         "type": "string",
-                        "description": "Capability to rank by: coding, vision, tools, reasoning, agent, general, cheapest, largest_context, image_gen, video_gen, audio_tts",
+                        "description": "Capability to rank by: general, llm, coding, vision, tools, reasoning, agent, general, cheapest, largest_context, image_gen, video_gen, audio_tts",
                     },
                     "limit": {
                         "type": "integer",
