@@ -14,13 +14,15 @@ http://registry.adamdoesai.com:9847
 
 | Endpoint | Description |
 |----------|-------------|
-| `GET /stats` | Total model count, breakdown by source and modality |
-| `GET /search?q=<query>` | Full-text search across all models |
-| `GET /search?q=video&modality=video_gen` | Filter by modality (llm, image, video, audio, vision, 3d) |
-| `GET /best_models?modality=video` | Top models by modality, sorted by downloads |
-| `GET /compare?models=veo-3.1,kling-3-pro` | Side-by-side model comparison |
-| `GET /models?source=openrouter` | Filter by source (openrouter, huggingface, ollama, commercial) |
-| `GET /health` | Health check |
+| `GET /stats` | Total model count, breakdown by source and modality (also serves as health check) |
+| `GET /models` | List all models, optionally filtered by source |
+| `GET /models?source=commercial` | Filter by source (openrouter, huggingface, ollama, commercial) |
+| `GET /models/search?q=<query>` | Full-text search across all models |
+| `GET /models/search?q=video&modality=video` | Filter by modality (llm, image, video, audio, vision, 3d) |
+| `GET /models/best?capability=video_gen` | Top models by capability (video_gen, image_gen, audio_tts, coding, vision, tools, agent) |
+| `GET /models/compare?models=google/veo-3.1,kling/kling-3-pro` | Side-by-side model comparison |
+| `GET /models/by-modality/video` | All models for a given modality |
+| `GET /models/by-source/commercial` | All models from a given source |
 
 ## Model Sources
 
@@ -88,13 +90,16 @@ bash deploy/deploy.sh your-domain.com
 curl http://registry.adamdoesai.com:9847/stats
 
 # Search for video models
-curl http://registry.adamdoesai.com:9847/search?q=video
+curl "http://registry.adamdoesai.com:9847/models/search?q=video"
 
-# Get best models by modality
-curl http://registry.adamdoesai.com:9847/best_models?modality=video
+# Get best video generation models
+curl "http://registry.adamdoesai.com:9847/models/best?capability=video_gen"
 
-# Compare models
-curl http://registry.adamdoesai.com:9847/compare?models=veo-3.1,kling-3-pro
+# Compare two models
+curl "http://registry.adamdoesai.com:9847/models/compare?models=google/veo-3.1,kling/kling-3-pro"
+
+# List commercial models
+curl "http://registry.adamdoesai.com:9847/models?source=commercial"
 ```
 
 ## Platforms
