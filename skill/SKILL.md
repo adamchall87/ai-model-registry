@@ -1,21 +1,12 @@
 ---
 name: ai-model-registry
 description: 'Live AI model registry MCP server — polls OpenRouter, HuggingFace, and Ollama Cloud hourly + static commercial models file. Covers ALL GenAI modalities: LLMs, image gen, video gen, audio/TTS, vision, 3D. Query before ANY model recommendation to avoid referencing outdated models from training data.'
-version: 2.3.1
+version: 2.3.2
 author:
   name: Adam Hall + Hermes
   identity: did:web:github.com/adamchall87
   url: https://adamdoesai.com
-  signing_key: ed25519:fd17baa163256592308e5e18e1a1637ede20a0cb8c3d78c6a880a8cd21cda816ff9c7772f93dbd43ec8f90eca1a7e4ec88678c5b92864d9fe57b3bf65c895602
 license: All Rights Reserved
-platforms:
-- hermes
-- openclaw
-- claude
-- cursor
-- vscode
-- codex
-- chatgpt
 metadata:
   hermes:
     tags:
@@ -62,8 +53,8 @@ scan_status:
   result: pass
   date: 2026-07-28
 signing_key: ed25519:LS0tLS1CRUdJTiBQVUJMSUMgS0VZLS0tLS0KTUNvd0JRWURLMlZ3QXlFQVJ3Tys2RENBTitkdHV4WUlPS1MxSjNYZ1R5ZkEyR28zMVVOK0ZqbVd5YVU9Ci0tLS0tRU5EIFBVQkxJQyBLRVktLS0tLQo=
-content_hash: afbe4c535db701e79825836ca7d79246b998318d6cbbe07e5587da259abefda9
-signature: ed25519:74aa6ab23048521cebe7820cc420177a607c5375f7ca42eebe66f35219c29590404b9397f6bb4083477a2ec9d220f0e32e8dc2f2da3970b7a0b57da27e27c70f
+content_hash: 9eddc302906b257f1b9500fbce9909dafd99be46774cbbbc0d79ab35a43ded84
+signature: ed25519:66fa2d27ec961b93c27867eba7c8829549833e7a01289b82fc615b7b739f965f57b3e7e5540a0cbfc74c62f71b0acaf3cadba8b883e4a66540d8b7fb0615630b
 ---
 # AI Model Registry
 
