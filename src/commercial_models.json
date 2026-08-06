@@ -259,20 +259,22 @@
       "current_version": "2.1"
     },
     {
-      "id": "ideogram/ideogram",
-      "name": "Ideogram",
+      "id": "ideogram/ideogram-4",
+      "name": "Ideogram 4.0",
       "provider_source": "commercial",
       "modality": "image",
-      "description": "Best for accurate text in images and typography control.",
+      "description": "Open-weight 9.3B text-to-image model. Best-in-class text rendering and typography control. Uses Qwen3-VL-8B-Instruct as text encoder for strong visual-language understanding. Supports bounding box control for precise text and object placement. 2K output resolution.",
       "company": "Ideogram AI",
-      "access": "Web app, API",
+      "access": "Web app, API, open weights on HuggingFace",
       "pricing": "Limited free plan, from $20/mo for 1,000 priority credits",
       "supports_text_to_image": true,
       "supports_image_editing": true,
       "is_free": false,
-      "local_capable": false,
+      "local_capable": true,
+      "max_resolution": "2K",
       "url": "https://ideogram.ai/",
-      "current_version": "current"
+      "current_version": "4.0",
+      "notes": "Released June 2026. 9.3B params, 34-layer single-stream DiT. Open weights (nf4 + fp8 quantizations on HuggingFace). License: other (check terms before commercial use)."
     },
     {
       "id": "google/imagen-4",
